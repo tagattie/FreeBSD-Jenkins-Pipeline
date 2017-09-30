@@ -1,0 +1,45 @@
+{
+    "freebsd": {
+        "branches": [<list of FreeBSD branches to work with>],
+        "build": {
+            { "current": ["amd64", "i386", "armv6", "arm64", "mips", "mips64"] },
+            { "<branchname>": [<List of architecture to build>] },
+            { ... }
+        },
+        "srcDirs": {
+            "current": "/usr/src",
+            "<branchname>": "<source directory>",
+            "...": "..."
+        },
+        "objDirBase": "${WORKSPACE}",
+        "archs": {
+            "amd64": {
+                "arch_m": "amd64",
+                "arch_p": "amd64"
+            },
+            "i386": {
+                "arch_m": "i386",
+                "arch_p": "i386"
+            },
+            "armv6": {
+                "arch_m": "arm",
+                "arch_p": "armv6"
+            },
+            "arm64": {
+                "arch_m": "arm64",
+                "arch_p": "aarch64"
+            },
+            "mips": {
+                "arch_m": "mips",
+                "arch_p": "mips"
+            },
+            "mips64": {
+                "arch_m": "mips",
+                "arch_p": "mips64"
+            }
+        }
+    },
+    "slack": {
+        "channel": "#jenkins"
+    }
+}

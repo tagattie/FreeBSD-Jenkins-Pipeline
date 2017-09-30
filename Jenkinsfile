@@ -163,7 +163,7 @@ def transformIntoBuildStep(inputStr, targetStr) {
             def branchStr = inputStr.split("-")[0]
             def archStr = inputStr.split("-")[1]
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
-                forceBuild) {
+                forceBuild == true) {
                 try {
                     sh """
 ${WORKSPACE}/Build.sh -n \\

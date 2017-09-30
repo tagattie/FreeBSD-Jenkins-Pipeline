@@ -11,6 +11,16 @@ pipeline {
     // triggers {
     // }
     stages {
+        stage('Checkout Jenkinsfile and other files.') {
+            steps {
+                timestamps {
+                    checkout scm
+                    archiveArtifacts 'Jenkinsfile'
+                    archiveArtifacts '*.sh'
+                }
+            }
+        }
+
         stage('Read config file and do some preparations.') {
             steps {
                 timestamps {

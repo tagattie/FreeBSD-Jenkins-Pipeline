@@ -166,7 +166,7 @@ def transformIntoBuildStep(inputStr, targetStr) {
                 forceBuild == true) {
                 try {
                     sh """
-${WORKSPACE}/Build.sh -n \\
+${WORKSPACE}/Build.sh \\
     ${config.freebsd.srcDirs."${branchStr}"} \\
     ${config.freebsd.objDirBase}/"${branchStr}" \\
     ${config.freebsd.archs."${archStr}".arch_m} \\

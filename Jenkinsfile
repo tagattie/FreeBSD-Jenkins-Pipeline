@@ -17,6 +17,7 @@ pipeline {
                     checkout scm
                     archiveArtifacts 'Jenkinsfile'
                     archiveArtifacts '*.sh'
+                    archiveArtifacts 'Config.json'
                 }
             }
         }
@@ -183,21 +184,21 @@ ${WORKSPACE}/Build.sh \\
     }
 }
 
-def transformMapListToPairStr(List inputList) {
-    def distPairs = []
-    Iterator it = inputList.iterator()
+def distributeListToPairs(List buildList) {
+    def pairs = []
+    def Iterator it = buildList.iterator()
     while (it.hasNext()) {
-        entry = it.next()
+        def entry = it.next()
         entry.each(
             { k, v ->
-                Iterator it2 = v.iterator()
+                def Iterator it2 = v.iterator()
                 while (it2.hasNext()) {
-                    element = it2.next()
-                    pairstr = k + "-" + element
-                    distPairs.add(pairstr)
+                    def element = it2.next()
+                    def pair = [k, element]
+                    pairs.push(pair)
                 }
             }
         )
     }
-    return distPairs
+    return pairs
 }

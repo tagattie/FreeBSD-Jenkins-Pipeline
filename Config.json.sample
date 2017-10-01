@@ -2,9 +2,19 @@
     "freebsd": {
         "branches": [<list of FreeBSD branches to work with>],
         "build": {
-            { "current": ["amd64", "i386", "armv6", "arm64", "mips", "mips64"] },
-            { "<branchname>": [<List of architecture to build>] },
-            { ... }
+            "current": {
+                "branch": "current",
+                "archs": ["amd64", "i386", "armv6", "arm64", "mips", "mips64"],
+                "enabled": true
+            },
+            "<branchname>": {
+                "branch": "<branchname>",
+                "archs": [<List of architecture to build>],
+                "enabled": true
+            },
+            "<branchname>": {
+                ...
+            }
         },
         "srcDirs": {
             "current": "/usr/src",

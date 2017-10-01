@@ -164,10 +164,8 @@ def transformIntoUpdateStep(String inputStr) {
 def transformIntoBuildStep(String branchStr, String archStr, String targetStr) {
     return {
         timestamps {
-            echo "branchStr = ${branchStr}"
-            echo "archStr = ${archStr}"
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
-                forceBuild == true) {
+                "${forceBuild}" == "true") {
                 try {
                     sh """
 ${WORKSPACE}/Build.sh \\

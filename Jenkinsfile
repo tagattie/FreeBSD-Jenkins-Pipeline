@@ -175,9 +175,9 @@ ${WORKSPACE}/Build.sh \\
     ${config.freebsd.archs."${archStr}".arch_p} \\
     ${targetStr}
 """
-                    currentBuild.description += " SUCCESS(build ${targetStr}:${inputStr})"
+                    currentBuild.description += " SUCCESS(build ${targetStr}:${branchStr}:${archStr})"
                 } catch (Exception e) {
-                    currentBuild.description += " FAILURE(build ${targetStr}:${inputStr})"
+                    currentBuild.description += " FAILURE(build ${targetStr}:${branchStr}:${archStr})"
                     throw e
                 }
             }

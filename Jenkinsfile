@@ -74,7 +74,7 @@ pipeline {
 
         stage('Poll SCM.') {
             when {
-                environment name: 'doPoll', value: 'y'
+                environment name: 'doPoll', value: 'true'
             }
             steps {
                 script {
@@ -90,7 +90,7 @@ pipeline {
 
         stage('Update source tree.') {
             when {
-                environment name: 'doUpdate', value: 'y'
+                environment name: 'doUpdate', value: 'true'
             }
             steps {
                 script {
@@ -106,7 +106,7 @@ pipeline {
 
         stage('Build world.') {
             when {
-                environment name: 'doBuild', value: 'y'
+                environment name: 'doBuild', value: 'true'
             }
             steps {
                 script {

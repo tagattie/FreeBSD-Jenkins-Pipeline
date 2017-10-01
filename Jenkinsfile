@@ -50,10 +50,11 @@ pipeline {
                             }
                         )
 
-                        buildPairs = transformMapListToPairStr(config.freebsd.build)
-                        buildWorldSteps = buildPairs.collectEntries(
+                        def buildList = config.freebsd.build
+                        def buildPairs = distributeListToPairs(buildList)
+                        buildWorldSteps = buildPairs.each(
                             {
-                                [it, transformIntoBuildStep(it, 'buildworld')]
+                                [it, transformIntoBuildStep(it[0], it[1], 'buildworld')]
                             }
                         )
                         currentBuild.description += ' SUCCESS(config)'
@@ -158,11 +159,11 @@ def transformIntoUpdateStep(inputStr) {
     }
 }
 
-def transformIntoBuildStep(inputStr, targetStr) {
+def transformIntoBuildStep(String branchStr, String archStr, String targetStr) {
     return {
         timestamps {
-            def branchStr = inputStr.split("-")[0]
-            def archStr = inputStr.split("-")[1]
+            echo "branchStr = ${branchStr}"
+            echo "archStr = ${archStr}"
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
                 forceBuild == true) {
                 try {

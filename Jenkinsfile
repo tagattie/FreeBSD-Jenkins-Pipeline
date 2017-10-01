@@ -126,7 +126,7 @@ pipeline {
     }
 }
 
-def transformIntoPollStep(inputStr) {
+def transformIntoPollStep(String inputStr) {
     return {
         timestamps {
             try {
@@ -142,7 +142,7 @@ def transformIntoPollStep(inputStr) {
     }
 }
 
-def transformIntoUpdateStep(inputStr) {
+def transformIntoUpdateStep(String inputStr) {
     return {
         timestamps {
             if (changed[inputStr] > 0) {

@@ -54,7 +54,7 @@ pipeline {
                         echo "buildMap = ${buildMap}"
                         def buildPairs = distributeMapToPairs(buildMap)
                         echo "buildPairs = ${buildPairs}"
-                        buildWorldSteps = buildPairs.each(
+                        buildWorldSteps = buildPairs.collectEntries(
                             {
                                 [it, transformIntoBuildStep(it[0], it[1], 'buildworld')]
                             }

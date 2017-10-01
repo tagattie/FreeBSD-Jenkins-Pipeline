@@ -50,8 +50,10 @@ pipeline {
                             }
                         )
 
-                        def buildList = config.freebsd.build
-                        def buildPairs = distributeListToPairs(buildList)
+                        def buildMap = config.freebsd.build
+                        echo "buildMap = ${buildMap}"
+                        def buildPairs = distributeMapToPairs(buildMap)
+                        echo "buildPairs = ${buildPairs}"
                         buildWorldSteps = buildPairs.each(
                             {
                                 [it, transformIntoBuildStep(it[0], it[1], 'buildworld')]
@@ -185,21 +187,17 @@ ${WORKSPACE}/Build.sh \\
     }
 }
 
-def distributeListToPairs(List buildList) {
+def distributeMapToPairs(Map buildMap) {
     def pairs = []
-    def Iterator it = buildList.iterator()
-    while (it.hasNext()) {
-        def entry = it.next()
-        entry.each(
-            { k, v ->
-                def Iterator it2 = v.iterator()
-                while (it2.hasNext()) {
-                    def element = it2.next()
-                    def pair = [k, element]
-                    pairs.push(pair)
-                }
+    buildMap.each {
+        if (it.getValue().get('enabled') == true) {
+            def branch = it.getValue().get('branch')
+            def archs = it.getValue().get('archs')
+            archs.each {
+                def pair = [branch, it]
+                pairs.push(pair)
             }
-        )
+        }
     }
     return pairs
 }

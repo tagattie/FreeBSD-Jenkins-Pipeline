@@ -21,7 +21,22 @@
             "<branchname>": "<source directory>",
             "...": "..."
         },
-        "objDirBase": "${WORKSPACE}",
+        "objDirBase": "${WORKSPACE}/obj",
+        "destDirBase": "${WORKSPACE}/dest",
+        "hosts": {
+            "<hostname>": {
+                "hostname": "<hostname>",
+                "branch": "<branchname>",
+                "arch": "<host architecture>",
+                "kernConf": "<host kernel configuration name>",
+                "steps": ["buildworld", "buildkernl", "installworld", "installkernel", "distribution"]
+                "buildImage": true,
+                "enabled": true
+            },
+            "<hostname>": {
+                ...
+            }
+        }
         "archs": {
             "amd64": {
                 "arch_m": "amd64",
@@ -50,6 +65,6 @@
         }
     },
     "slack": {
-        "channel": "#jenkins"
+        "channel": "<channelname>"
     }
 }

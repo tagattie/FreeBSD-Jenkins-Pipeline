@@ -1,7 +1,7 @@
 #! /bin/sh -xe
 
 export  LANG=C
-export  PATH=/sbin:/bin:/usr/sbin:/usr/bin
+export  PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 
 # Comman-line format:
 # Build.sh srcDir objDirPrefix machArch cpuArch buildTarget
@@ -36,9 +36,12 @@ for i in "$@"; do
     if [ "${i}" == "buildworld" ] || \
            [ "${i}" == "buildkernel" ]; then
         FINAL_MAKE_FLAGS="-j ${NJOBS} ${MAKE_FLAGS}"
-    else
+    elif [ "${i}" == "installworld" ] || \
+             [ "${i}" == "installkernel" ] || \
+             [ "${i}" == "distribution" ]; then
+        SUDO_COMMAND="sudo"
         FINAL_MAKE_FLAGS="${MAKE_FLAGS}"
     fi
-    BUILD_COMMAND="env ${MAKE_ENVS} make ${FINAL_MAKE_FLAGS} ${MAKE_ARGS} ${i}"
+    BUILD_COMMAND="${SUDO_COMMAND} env ${MAKE_ENVS} make ${FINAL_MAKE_FLAGS} ${MAKE_ARGS} ${i}"
     (cd ${SRCDIR} && ${BUILD_COMMAND})
 done

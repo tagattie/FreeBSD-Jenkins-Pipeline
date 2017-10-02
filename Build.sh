@@ -9,13 +9,15 @@ SRCDIR=${1}
 OBJDIRPREFIX=${2}
 ARCH_m=${3}
 ARCH_p=${4}
-if [ -n "${5}" ]; then
+if [ "${5}" != "null" ]; then
     KERN_ARGS="KERNCONF=${5}"
 fi
-if [ -n "${6}" ]; then
+if [ "${6}" != "null" ]; then
     DEST_ARGS="DESTDIR=${6}"
 fi
-ADD_ARGS=${7}
+if [ "${7}" != "null" ]; then
+    ADD_ARGS=${7}
+fi
 
 shift 7
 TARGETS=$@

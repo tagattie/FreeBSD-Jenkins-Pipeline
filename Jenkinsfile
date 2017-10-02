@@ -51,9 +51,7 @@ pipeline {
                         )
 
                         def buildMap = config.freebsd.build
-                        echo "buildMap = ${buildMap}"
                         def buildPairs = distributeMapToPairs(buildMap)
-                        echo "buildPairs = ${buildPairs}"
                         buildSteps = buildPairs.collectEntries(
                             {
                                 [it, transformIntoBuildStep(it[0], it[1])]

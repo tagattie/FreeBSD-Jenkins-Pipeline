@@ -54,9 +54,9 @@ pipeline {
                         echo "buildMap = ${buildMap}"
                         def buildPairs = distributeMapToPairs(buildMap)
                         echo "buildPairs = ${buildPairs}"
-                        buildWorldSteps = buildPairs.collectEntries(
+                        buildSteps = buildPairs.collectEntries(
                             {
-                                [it, transformIntoBuildStep(it[0], it[1], 'buildworld')]
+                                [it, transformIntoBuildStep(it[0], it[1])]
                             }
                         )
                         currentBuild.description += ' SUCCESS(config)'
@@ -106,13 +106,13 @@ pipeline {
             }
         }
 
-        stage('Build world.') {
+        stage('Build world and generic kernel.') {
             when {
                 environment name: 'doBuild', value: 'true'
             }
             steps {
                 script {
-                    parallel(buildWorldSteps)
+                    parallel(buildSteps)
                 }
             }
         }
@@ -161,7 +161,7 @@ def transformIntoUpdateStep(String inputStr) {
     }
 }
 
-def transformIntoBuildStep(String branchStr, String archStr, String targetStr) {
+def transformIntoBuildStep(String branchStr, String archStr) {
     return {
         timestamps {
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
@@ -173,11 +173,15 @@ ${WORKSPACE}/Build.sh \\
     ${config.freebsd.objDirBase}/"${branchStr}" \\
     ${config.freebsd.archs."${archStr}".arch_m} \\
     ${config.freebsd.archs."${archStr}".arch_p} \\
-    ${targetStr}
+    "" \\
+    "" \\
+    "" \\
+    buildworld \\
+    buildkernel
 """
-                    currentBuild.description += " SUCCESS(build ${targetStr}:${branchStr}:${archStr})"
+                    currentBuild.description += " SUCCESS(build buildworld & buildkernel:${branchStr}:${archStr})"
                 } catch (Exception e) {
-                    currentBuild.description += " FAILURE(build ${targetStr}:${branchStr}:${archStr})"
+                    currentBuild.description += " FAILURE(build buildworld & buildkernel:${branchStr}:${archStr})"
                     throw e
                 }
             }

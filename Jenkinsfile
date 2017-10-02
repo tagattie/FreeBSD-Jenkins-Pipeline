@@ -57,6 +57,11 @@ pipeline {
                                 [it, transformIntoBuildStep(it[0], it[1])]
                             }
                         )
+                        buildHostSteps = config.freebsd.hosts.collectEntries(
+                            {
+                                [it.getValue().get('hostname'), transformIntoBuildHostStep(it.getValue().get('hostname'))]
+                            }
+                        )
                         currentBuild.description += ' SUCCESS(config)'
                     }
                 }
@@ -111,6 +116,17 @@ pipeline {
             steps {
                 script {
                     parallel(buildSteps)
+                }
+            }
+        }
+
+        stage('Build host.') {
+            when {
+                environment name: 'doBuildHost', value: 'true'
+            }
+            steps {
+                script {
+                    parallel(buildHostSteps)
                 }
             }
         }
@@ -186,6 +202,39 @@ ${WORKSPACE}/Build.sh \\
         }
     }
 }
+
+def transformIntoBuildHostStep(String hostStr) {
+    return {
+        timestamps {
+            if ((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
+                 buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
+                "${forceBuild}" == "true") {
+                try {
+                    def targets = ""
+                    config.freebsd.hosts."${hostStr}".steps.each {
+                        targets += "${it}" + " "
+                    }
+                    sh """
+${WORKSPACE}/Build.sh \\
+    ${config.freebsd.srcDirs."${config.freebsd.hosts."${hostStr}".branch}"} \\
+    ${config.freebsd.objDirBase}/"${hostStr}" \\
+    ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_m} \\
+    ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_p} \\
+    ${config.freebsd.hosts."${hostStr}".kernConf} \\
+    ${config.freebsd.destDirBase}/"${hostStr}" \\
+    ${config.freebsd.hosts."${hostStr}".addMakeEnv} \\
+    ${targets}
+"""
+                    currentBuild.description += " SUCCESS(build ${hostStr})"
+                } catch (Exception e) {
+                    currentBuild.description += " FAILURE(build ${hostStr})"
+                    throw e
+                }
+            }
+        }
+    }
+}
+
 
 def distributeMapToPairs(Map buildMap) {
     def pairs = []

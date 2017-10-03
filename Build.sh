@@ -4,7 +4,7 @@ export  LANG=C
 export  PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 
 # Comman-line format:
-# Build.sh srcDir objDirPrefix machArch cpuArch buildTarget
+# Build.sh srcDir objDirPrefix machArch cpuArch kernArgs destArgs additionalArgs buildTargets
 SRCDIR=${1}
 OBJDIRPREFIX=${2}
 ARCH_m=${3}

@@ -222,11 +222,11 @@ def transformIntoBuildHostStep(String hostStr) {
                     sh """
 ${WORKSPACE}/Build.sh \\
     ${config.freebsd.srcDirs."${config.freebsd.hosts."${hostStr}".branch}"} \\
-    ${config.freebsd.objDirBase}/"{BUILDNAME}"/"${hostStr}" \\
+    ${config.freebsd.objDirBase}/"${BUILDNAME}"/"${hostStr}" \\
     ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_m} \\
     ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_p} \\
     ${config.freebsd.hosts."${hostStr}".kernConf} \\
-    ${config.freebsd.destDirBase}/"{BUILDNAME}"/"${hostStr}" \\
+    ${config.freebsd.destDirBase}/"${BUILDNAME}"/"${hostStr}" \\
     ${config.freebsd.hosts."${hostStr}".addMakeEnv} \\
     ${targets}
 """

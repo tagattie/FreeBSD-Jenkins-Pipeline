@@ -1,6 +1,6 @@
 {
     "freebsd": {
-        "branches": [<list of FreeBSD branches to work with>],
+        "branches": ["<list of FreeBSD branches to work with>"],
         "build": {
             "current": {
                 "branch": "current",
@@ -9,7 +9,7 @@
             },
             "<branchname>": {
                 "branch": "<branchname>",
-                "archs": [<List of architecture to build>],
+                "archs": ["<List of architecture to build>"],
                 "enabled": true
             },
             "<branchname>": {
@@ -31,7 +31,7 @@
                 "branch": "current",
                 "arch": "amd64",
                 "kernConf": "GENERIC",
-                "steps": ["buildworld", "buildkernl", "installworld", "installkernel", "distribution"]
+                "steps": ["buildworld", "buildkernl", "installworld", "installkernel", "distribution"],
                 "buildImage": false,
                 "enabled": true
             },
@@ -40,9 +40,9 @@
                 "branch": "<branchname>",
                 "arch": "<host architecture>",
                 "kernConf": "<host kernel configuration name>",
-                "steps": ["<make targets for this host>"," "...", "..."]
-                "buildImage": <build SD card/USB stick image for this host>,
-                "enabled": <enable build for this host>
+                "steps": ["<make targets for this host>", "...", "..."],
+                "buildImage": "<build SD card/USB stick image for this host>",
+                "enabled": "<enable build for this host>"
             },
             "<hostname>": {
                 ...

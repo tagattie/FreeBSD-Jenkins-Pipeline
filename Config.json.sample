@@ -18,20 +18,31 @@
         },
         "srcDirs": {
             "current": "/usr/src",
-            "<branchname>": "<source directory>",
-            "...": "..."
+            "stable11": "/usr/freebsd/src/stable/11",
+            "stable10": "/usr/freebsd/src/stable/10",
+            "<branchname>": "<source directory>"
         },
         "objDirBase": "${WORKSPACE}/obj",
         "destDirBase": "${WORKSPACE}/dest",
+        "imageDirBase": "${WORKSPACE}/image",
         "hosts": {
+            "freebsdhost": {
+                "hostname": "freebsdhost",
+                "branch": "current",
+                "arch": "amd64",
+                "kernConf": "GENERIC",
+                "steps": ["buildworld", "buildkernl", "installworld", "installkernel", "distribution"]
+                "buildImage": false,
+                "enabled": true
+            },
             "<hostname>": {
                 "hostname": "<hostname>",
                 "branch": "<branchname>",
                 "arch": "<host architecture>",
                 "kernConf": "<host kernel configuration name>",
-                "steps": ["buildworld", "buildkernl", "installworld", "installkernel", "distribution"]
-                "buildImage": true,
-                "enabled": true
+                "steps": ["<make targets for this host>"," "...", "..."]
+                "buildImage": <build SD card/USB stick image for this host>,
+                "enabled": <enable build for this host>
             },
             "<hostname>": {
                 ...

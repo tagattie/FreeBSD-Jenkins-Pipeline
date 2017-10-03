@@ -5,6 +5,11 @@ pipeline {
     environment {
         // Configuration file (JSON)
         CONFIG='Config.json'
+        // Build name based on current date/time
+        BUILDNAME=sh (
+            returnStdout: true,
+            script: 'date "+%Y-%m-%d-%H%M%S"'
+        ).trim()
     }
     // parameters {
     // }
@@ -184,7 +189,7 @@ def transformIntoBuildStep(String branchStr, String archStr) {
                     sh """
 ${WORKSPACE}/Build.sh \\
     ${config.freebsd.srcDirs."${branchStr}"} \\
-    ${config.freebsd.objDirBase}/"${branchStr}" \\
+    ${config.freebsd.objDirBase}/"${BUILDNAME}"/"${branchStr}" \\
     ${config.freebsd.archs."${archStr}".arch_m} \\
     ${config.freebsd.archs."${archStr}".arch_p} \\
     "" \\
@@ -217,11 +222,11 @@ def transformIntoBuildHostStep(String hostStr) {
                     sh """
 ${WORKSPACE}/Build.sh \\
     ${config.freebsd.srcDirs."${config.freebsd.hosts."${hostStr}".branch}"} \\
-    ${config.freebsd.objDirBase}/"${hostStr}" \\
+    ${config.freebsd.objDirBase}/"{BUILDNAME}"/"${hostStr}" \\
     ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_m} \\
     ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_p} \\
     ${config.freebsd.hosts."${hostStr}".kernConf} \\
-    ${config.freebsd.destDirBase}/"${hostStr}" \\
+    ${config.freebsd.destDirBase}/"{BUILDNAME}"/"${hostStr}" \\
     ${config.freebsd.hosts."${hostStr}".addMakeEnv} \\
     ${targets}
 """

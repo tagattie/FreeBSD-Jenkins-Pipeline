@@ -67,6 +67,16 @@ pipeline {
                                 [it.getValue().get('hostname'), transformIntoBuildHostStep(it.getValue().get('hostname'))]
                             }
                         )
+                        buildImageSteps = config.freebsd.hosts.findAll(
+                            {
+                                it.getValue().get('buildImage')
+                            }
+                        ).collectEntries(
+                            {
+                                [it.getValue().get('hostname'), transformIntoBuildImageStep(it.getValue().get('hostname'))]
+                            }
+                        )
+                        echo "buildImageSteps = ${buildImageSteps}"
                         currentBuild.description += ' SUCCESS(config)'
                     }
                 }
@@ -114,6 +124,7 @@ pipeline {
             }
         }
 
+        // TODO: Parallelize these two stages.
         stage('Build world and generic kernel.') {
             when {
                 environment name: 'doBuild', value: 'true'
@@ -132,6 +143,17 @@ pipeline {
             steps {
                 script {
                     parallel(buildHostSteps)
+                }
+            }
+        }
+
+        stage('Build image.') {
+            when {
+                environment name: 'doBuildImage', value: 'true'
+            }
+            steps {
+                script {
+                    parallel(buildImageSteps)
                 }
             }
         }
@@ -198,9 +220,9 @@ ${WORKSPACE}/Build.sh \\
     buildworld \\
     buildkernel
 """
-                    currentBuild.description += " SUCCESS(build buildworld & buildkernel:${branchStr}:${archStr})"
+                    currentBuild.description += " SUCCESS(build world & kernel:${branchStr}:${archStr})"
                 } catch (Exception e) {
-                    currentBuild.description += " FAILURE(build buildworld & buildkernel:${branchStr}:${archStr})"
+                    currentBuild.description += " FAILURE(build world & kernel:${branchStr}:${archStr})"
                     throw e
                 }
             }
@@ -240,6 +262,51 @@ ${WORKSPACE}/Build.sh \\
     }
 }
 
+def transformIntoBuildImageStep(String hostStr) {
+    return {
+        timestamps {
+            if ((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
+                 buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
+                "${forceBuild}" == "true" ||
+                "${useLatestExistingBuild}" == "true") {
+                try {
+                    def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"
+                    echo "enabled = ${enabled}"
+                    def script = "${config.freebsd.hosts."${hostStr}".buildImageScript}"
+                    echo "script = ${script}"
+                    def buildName = "${BUILDNAME}"
+                    if ("${enabled}" == "true" && "${script}" != "null") {
+                        if ("${useLatestExistingBuild}" == "true") {
+                            buildName = sh (
+                                returnStdout: true,
+                                script: """
+find ${config.freebsd.destDirBase} -maxdepth 2 -type d -name ${hostStr} -print | \\
+awk -F'/' '{print \$(NF-1), \$NF}' | \\
+sort -nr | \\
+awk '{print \$1}'
+"""
+                            ).trim()
+                        }
+                        echo "buildName = ${buildName}"
+                        sh """
+${WORKSPACE}/"${script}" \\
+    ${buildName} \\
+    ${config.freebsd.destDirBase}/"${buildName}"/"${hostStr}" \\
+    ${config.freebsd.imageDirBase}/"${buildName}" \\
+    ${hostStr} \\
+    ${config.freebsd.hosts."${hostStr}".branch} \\
+    ${config.freebsd.hosts."${hostStr}".arch}
+"""
+                        currentBuild.description += " SUCCESS(build image ${hostStr})"
+                    }
+                } catch (Exception e) {
+                    currentBuild.description += " FAILURE(build image ${hostStr})"
+                    throw e
+                }
+            }
+        }
+    }
+}
 
 def distributeMapToPairs(Map buildMap) {
     def pairs = []

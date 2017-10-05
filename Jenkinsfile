@@ -286,6 +286,10 @@ sort -nr | \\
 awk '{print \$1}'
 """
                             ).trim()
+                            if (!"${buildName}") {
+                                echo "buildName = ${buildName}"
+                                error("No existing build. Cannot continue to make image.")
+                            }
                         }
                         echo "buildName = ${buildName}"
                         sh """

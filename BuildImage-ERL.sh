@@ -93,7 +93,7 @@ echo "Memory disk device name is ${MDDEVNAME}"
 mkdir -p "${WORKDIR}/${BOOTPARTLABEL}"
 "${SUDO_COMMAND}" mount -t "${BOOTPARTFSTYPE}" \
     -l "/dev/${MDDEVNAME}s1" "${WORKDIR}/${BOOTPARTLABEL}"
-rsync -a --info=STATS3 --delete --stats \
+rsync -a --info=STATS3 --stats \
     "${DESTDIR}/boot/kernel" \
     "${WORKDIR}/${BOOTPARTLABEL}"
 "${SUDO_COMMAND}" umount "${WORKDIR}/${BOOTPARTLABEL}"

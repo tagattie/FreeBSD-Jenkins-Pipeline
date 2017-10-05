@@ -272,10 +272,10 @@ def transformIntoBuildImageStep(String hostStr) {
                 try {
                     def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"
                     echo "enabled = ${enabled}"
-                    def script = "${config.freebsd.hosts."${hostStr}".buildImageScript}"
-                    echo "script = ${script}"
+                    def conf = "${config.freebsd.hosts."${hostStr}".buildImageConf}"
+                    echo "conf = ${conf}"
                     def buildName = "${BUILDNAME}"
-                    if ("${enabled}" == "true" && "${script}" != "null") {
+                    if ("${enabled}" == "true" && "${conf}" != "null") {
                         if ("${useLatestExistingBuild}" == "true") {
                             buildName = sh (
                                 returnStdout: true,
@@ -289,13 +289,14 @@ awk '{print \$1}'
                         }
                         echo "buildName = ${buildName}"
                         sh """
-${WORKSPACE}/"${script}" \\
+${WORKSPACE}/"BuildImage-${conf}.sh" \\
     ${buildName} \\
     ${config.freebsd.destDirBase}/"${buildName}"/"${hostStr}" \\
     ${config.freebsd.imageDirBase}/"${buildName}" \\
     ${hostStr} \\
     ${config.freebsd.hosts."${hostStr}".branch} \\
-    ${config.freebsd.hosts."${hostStr}".arch}
+    ${config.freebsd.hosts."${hostStr}".arch} \\
+    ${config.freebsd.hosts."${hostStr}".buildImageConf}
 """
                         currentBuild.description += " SUCCESS(build image ${hostStr})"
                     }

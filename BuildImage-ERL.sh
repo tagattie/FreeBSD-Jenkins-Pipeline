@@ -17,7 +17,8 @@ BRANCHNAME=${5}
 ARCHNAME=${6}
 CONFNAME=${7}
 
-WORKDIR="$(pwd)/work"
+WORKSPACE="$(pwd)"
+WORKDIR="${WORKSPACE}/work"
 IMAGEFILE="FreeBSD-${BRANCHNAME}-${ARCHNAME}-${HOSTNAME}-${BUILDNAME}.img"
 
 KiB=1024
@@ -68,6 +69,7 @@ done
 
 mkdir -p "${WORKDIR}"
 
+# Create image file and mount it as memory disk
 truncate -s "${IMGSIZE}" "${WORKDIR}/${IMAGEFILE}"
 MDDEVNAME=$(${SUDO_COMMAND} mdconfig -a -t vnode \
     -x ${SECTORSPERTRACK} -y ${HEADSPERCYLINDER} -f ${WORKDIR}/${IMAGEFILE})
@@ -108,8 +110,8 @@ rmdir "${WORKDIR}/${BOOTPARTLABEL}"
     -t ffs \
     -o label="${FBPARTFSLABEL}" -o version=2 \
     -s "${FBPARTFSSIZE}" \
-    $(basename ${IMAGEFILE} .img).ufs "${DESTDIR}"
-"${SUDO_COMMAND}" dd if=$(basename ${IMAGEFILE} .img).ufs \
+    "${WORKDIR}"/$(basename ${IMAGEFILE} .img).ufs "${DESTDIR}"
+"${SUDO_COMMAND}" dd if="${WORKDIR}"/$(basename ${IMAGEFILE} .img).ufs \
     of="/dev/${MDDEVNAME}s2a" bs=1m
 "${SUDO_COMMAND}" mdconfig -d -u "${MDDEVNAME}"
 

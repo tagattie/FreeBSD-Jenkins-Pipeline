@@ -42,6 +42,7 @@
                 "kernConf": "<host kernel configuration name>",
                 "steps": ["<make targets for this host>", "...", "..."],
                 "buildImage": "<build SD card/USB stick image for this host>",
+                "buildImageConf": "<conf name used as in the build image shell script name>",
                 "enabled": "<enable build for this host>"
             },
             "<hostname>": {

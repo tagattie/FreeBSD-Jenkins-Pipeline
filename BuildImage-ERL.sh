@@ -48,7 +48,7 @@ FBPARTFSTYPE="freebsd-ufs"
 FBPARTFSALIGN=$((64*${KiB}))
 FBPARTFSENDIAN="big"
 FBPARTFSLABEL="rootfs"
-FBPARTFSMINFREE=$(bc -e "2*${GiB}/1024*0.5" -e quit | awk -F'.' '{print $1}')
+FBPARTFSMINFREE=$(bc -e "${IMGSIZE}/1024*0.5" -e quit | awk -F'.' '{print $1}')
 FBPARTFSMARGIN=$((64*${MiB}))
 FBPARTFSSIZE=$(((${IMGSIZEMB}-${BOOTPARTSIZEMB})*${MiB}-${FBPARTFSMARGIN}))
 

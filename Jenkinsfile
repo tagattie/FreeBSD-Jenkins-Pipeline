@@ -76,7 +76,6 @@ pipeline {
                                 [it.getValue().get('hostname'), transformIntoBuildImageStep(it.getValue().get('hostname'))]
                             }
                         )
-                        echo "buildImageSteps = ${buildImageSteps}"
                         currentBuild.description += ' SUCCESS(config)'
                     }
                 }
@@ -271,9 +270,7 @@ def transformIntoBuildImageStep(String hostStr) {
                 "${useLatestExistingBuild}" == "true") {
                 try {
                     def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"
-                    echo "enabled = ${enabled}"
                     def conf = "${config.freebsd.hosts."${hostStr}".buildImageConf}"
-                    echo "conf = ${conf}"
                     def buildName = "${BUILDNAME}"
                     if ("${enabled}" == "true" && "${conf}" != "null") {
                         if ("${useLatestExistingBuild}" == "true") {
@@ -287,11 +284,9 @@ awk '{print \$1}'
 """
                             ).trim()
                             if (!"${buildName}") {
-                                echo "buildName = ${buildName}"
                                 error("No existing build. Cannot continue to make image.")
                             }
                         }
-                        echo "buildName = ${buildName}"
                         sh """
 ${WORKSPACE}/"BuildImage-${conf}.sh" \\
     ${buildName} \\

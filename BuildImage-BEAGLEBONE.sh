@@ -52,6 +52,10 @@ FBPARTFSLABEL="rootfs"
 FBPARTFSMINFREE=$(bc -e "${IMGSIZE}/1024*0.5" -e quit | awk -F'.' '{print $1}')
 FBPARTFSMARGIN=$((2*${MiB}))
 FBPARTFSSIZE=$(((${IMGSIZEMB}-${BOOTPARTSIZEMB})*${MiB}-${FBPARTFSMARGIN}))
+### Swapfile
+# SWAPFILENAME="swap0"
+# SWAPFILESIZE=$((1*${GiB}))
+### You need to increase IMGSIZE if you create swapfile here.
 
 # Populate some files in advance of image building
 OVERLAYFILES="boot/loader.conf etc/fstab etc/rc.conf"
@@ -66,6 +70,10 @@ for i in ${OVERLAYFILES}; do
         -g "${OVERLAYFILEGROUP}" \
         "${WORKSPACE}/overlays/${CONFNAME}/${i}" "${DESTDIR}/${i}"
 done
+### Swapfile
+# "${SUDO_COMMAND}" truncate -s "${SWAPFILESIZE}" "${DESTDIR}/${SWAPFILENAME}"
+# "${SUDO_COMMAND}" chmod 600 "${DESTDIR}/${SWAPFILENAME}"
+### Swapfile
 "${SUDO_COMMAND}" touch "${DESTDIR}/${FIRSTBOOTSENTINEL}"
 
 mkdir -p "${WORKDIR}"

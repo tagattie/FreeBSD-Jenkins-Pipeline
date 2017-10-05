@@ -24,7 +24,7 @@ IMAGEFILE="FreeBSD-${BRANCHNAME}-${ARCHNAME}-${HOSTNAME}-${BUILDNAME}.img"
 KiB=1024
 MiB=$((${KiB}*1024))
 GiB=$((${MiB}*1024))
-# Image size is 2GiB
+# Image size is 1GiB
 IMGSIZE=$((1*${GiB}))
 IMGSIZEMB=$((${IMGSIZE}/${MiB}))
 # Very traditional logical disk structure
@@ -50,7 +50,7 @@ FBPARTFSALIGN=$((64*${KiB}))
 FBPARTFSENDIAN="big"
 FBPARTFSLABEL="rootfs"
 FBPARTFSMINFREE=$(bc -e "${IMGSIZE}/1024*0.5" -e quit | awk -F'.' '{print $1}')
-FBPARTFSMARGIN=$((2*${MiB}))
+FBPARTFSMARGIN=$((1*${MiB}))
 FBPARTFSSIZE=$(((${IMGSIZEMB}-${BOOTPARTSIZEMB})*${MiB}-${FBPARTFSMARGIN}))
 ### Swapfile
 # SWAPFILENAME="swap0"
@@ -73,7 +73,7 @@ done
 ### Swapfile
 # "${SUDO_COMMAND}" truncate -s "${SWAPFILESIZE}" "${DESTDIR}/${SWAPFILENAME}"
 # "${SUDO_COMMAND}" chmod 600 "${DESTDIR}/${SWAPFILENAME}"
-### Swapfile
+###
 "${SUDO_COMMAND}" touch "${DESTDIR}/${FIRSTBOOTSENTINEL}"
 
 mkdir -p "${WORKDIR}"
@@ -106,7 +106,6 @@ UBOOTBASEDIR="/usr/local/share/u-boot/u-boot-beaglebone"
 UBOOTFILES="MLO u-boot.img"
 UBLDRBASEDIR="${DESTDIR}/boot"
 UBLDRFILES="ubldr ubldr.bin"
-
 for i in ${UBOOTFILES}; do
     "${SUDO_COMMAND}" install -c \
         "${UBOOTBASEDIR}/${i}" "${WORKDIR}/${BOOTPARTLABEL}/${i}"
@@ -115,6 +114,7 @@ for i in ${UBLDRFILES}; do
     "${SUDO_COMMAND}" install -c \
         "${UBLDRBASEDIR}/${i}" "${WORKDIR}/${BOOTPARTLABEL}/${i}"
 done
+
 "${SUDO_COMMAND}" umount "${WORKDIR}/${BOOTPARTLABEL}"
 rmdir "${WORKDIR}/${BOOTPARTLABEL}"
 
@@ -125,7 +125,9 @@ rmdir "${WORKDIR}/${BOOTPARTLABEL}"
 # Add freebsd-ufs partition (make alignment to 64KiB)
 "${SUDO_COMMAND}" gpart add -a "${FBPARTFSALIGN}" \
     -t "${FBPARTFSTYPE}" "${MDDEVNAME}s2"
+# Create UFS filesystem in the FreeBSD slice
 "${SUDO_COMMAND}" newfs -U -j -t -L "${FBPARTFSLABEL}" "/dev/${MDDEVNAME}s2a"
+# Mount the UFS filesystem and copy distribution onto it
 mkdir -p "${WORKDIR}/${FBPARTFSLABEL}"
 "${SUDO_COMMAND}" mount -t ufs "/dev/${MDDEVNAME}s2a" "${WORKDIR}/${FBPARTFSLABEL}"
 
@@ -135,11 +137,14 @@ mkdir -p "${WORKDIR}/${FBPARTFSLABEL}"
 (cd "${WORKDIR}/${FBPARTFSLABEL}/boot/dtb" && \
     "${SUDO_COMMAND}" ln beaglebone.dtb am335x-bone.dtb &&
     "${SUDO_COMMAND}" ln beaglebone-black.dtb am335x-boneblack.dtb)
+
 "${SUDO_COMMAND}" umount "${WORKDIR}/${FBPARTFSLABEL}"
 "${SUDO_COMMAND}" mdconfig -d -u "${MDDEVNAME}"
 
+# Copy image file to specified directory
 mkdir -p "${IMAGEDIR}"
 cp -pf "${WORKDIR}/${IMAGEFILE}" "${IMAGEDIR}"
+
 echo "Your image is ready at ${IMAGEDIR}/${IMAGEFILE}"
 echo "To write the image to a USB stick, do the following command:"
 echo "sudo dd if=${IMAGEDIR}/${IMAGEFILE} of=/dev/<your USB stick> bs=1m"

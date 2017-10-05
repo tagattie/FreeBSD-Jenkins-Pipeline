@@ -37,6 +37,7 @@ PARTSCHEME="MBR"
 # Boot partition
 BOOTPARTSIZE=$((256*${MiB}))
 BOOTPARTSIZEMB=$((${BOOTPARTSIZE}/${MiB}))
+BOOTPARTSECTORMARGIN=1
 BOOTPARTTYPE='!12'              # FAT32 (LBA-addressable)
 BOOTPARTLABEL="msdosboot"
 BOOTPARTFSTYPE="msdosfs"
@@ -80,7 +81,7 @@ echo "Memory disk device name is ${MDDEVNAME}"
 # Create FAT32(LBA-addressable) partition for boot (1st slice)
 "${SUDO_COMMAND}" gpart add -a "${SECTORSPERTRACK}" \
     -b "${STARTSECTOR}" \
-    -s $((${BOOTPARTSIZE}/${BYTESPERSECTOR})) \
+    -s $((${BOOTPARTSIZE}/${BYTESPERSECTOR}-${BOOTPARTSECTORMARGIN})) \
     -t "${BOOTPARTTYPE}" "${MDDEVNAME}"
 # Make the slice (boot slice) active (bootable)
 "${SUDO_COMMAND}" gpart set -a active \

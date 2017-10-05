@@ -8,13 +8,14 @@ export  PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 SUDO_COMMAND="sudo"
 
 # Comman-line format:
-# Build.sh buildName destDir imageDir hostname branchname archname
+# BuildImage-ERL.sh buildName destDir imageDir hostname branchname archname confname
 BUILDNAME=${1}
 DESTDIR=${2}
 IMAGEDIR=${3}
 HOSTNAME=${4}
 BRANCHNAME=${5}
 ARCHNAME=${6}
+CONFNAME=${7}
 
 WORKDIR="$(pwd)/work"
 IMAGEFILE="FreeBSD-${BRANCHNAME}-${ARCHNAME}-${HOSTNAME}-${BUILDNAME}.img"
@@ -49,6 +50,21 @@ FBPARTFSLABEL="rootfs"
 FBPARTFSMINFREE=$(bc -e "2*${GiB}/1024*0.5" -e quit | awk -F'.' '{print $1}')
 FBPARTFSMARGIN=$((64*${MiB}))
 FBPARTFSSIZE=$(((${IMGSIZEMB}-${BOOTPARTSIZEMB})*${MiB}-${FBPARTFSMARGIN}))
+
+# Populate some files in advance of image building
+OVERLAYFILES="boot/loader.conf etc/fstab etc/rc.conf"
+OVERLAYFILEMODE="644"
+OVERLAYFILEOWNER="root"
+OVERLAYFILEGROUP="wheel"
+FIRSTBOOTSENTINEL="firstboot"
+for i in ${OVERLAYFILES}; do
+    "${SUDO_COMMAND}" install -c \
+        -m "${OVERLAYFILEMODE}" \
+        -o "${OVERLAYFILEOWNER}" \
+        -g "${OVERLAYFILEGROUP}" \
+        "${WORKSPACE}/overlays/${CONFNAME}/${i}" "${DESTDIR}/${i}"
+done
+"${SUDO_COMMAND}" touch ${DESTDIR}/${FIRSTBOOTSENTINEL}
 
 mkdir -p "${WORKDIR}"
 

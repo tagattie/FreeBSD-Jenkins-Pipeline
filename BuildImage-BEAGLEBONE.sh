@@ -128,10 +128,10 @@ rmdir "${WORKDIR}/${BOOTPARTLABEL}"
 "${SUDO_COMMAND}" newfs -U -j -t -L "${FBPARTFSLABEL}" "/dev/${MDDEVNAME}s2a"
 mkdir -p "${WORKDIR}/${FBPARTFSLABEL}"
 "${SUDO_COMMAND}" mount -t ufs "/dev/${MDDEVNAME}s2a" "${WORKDIR}/${FBPARTFSLABEL}"
-"${SUDO_COMMAND}" rsync -a -H --info=STATS3 --stats \
-    "${DESTDIR}/" \
-    "${WORKDIR}/${FBPARTFSLABEL}"
 
+(cd "${DESTDIR}" && \
+    "${SUDO_COMMAND}" find . -print -depth | \
+    "${SUDO_COMMAND}" cpio -padm "${WORKDIR}/${FBPARTFSLABEL}")
 (cd "${WORKDIR}/${FBPARTFSLABEL}/boot/dtb" && \
     "${SUDO_COMMAND}" ln beaglebone.dtb am335x-bone.dtb &&
     "${SUDO_COMMAND}" ln beaglebone-black.dtb am335x-boneblack.dtb)

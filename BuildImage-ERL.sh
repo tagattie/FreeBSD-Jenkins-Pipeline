@@ -101,9 +101,12 @@ echo "Memory disk device name is ${MDDEVNAME}"
 mkdir -p "${WORKDIR}/${BOOTPARTLABEL}"
 "${SUDO_COMMAND}" mount -t "${BOOTPARTFSTYPE}" \
     -l "/dev/${MDDEVNAME}s1" "${WORKDIR}/${BOOTPARTLABEL}"
-rsync -a --info=STATS3 --stats \
-    "${DESTDIR}/boot/kernel" \
-    "${WORKDIR}/${BOOTPARTLABEL}"
+
+install -d "${WORKDIR}/${FBPARTFSLABEL}/kernel"
+(cd "${DESTDIR}/boot/kernel" && \
+    find . -print -depth | \
+    cpio -padm "${WORKDIR}/${FBPARTFSLABEL}/kernel")
+
 "${SUDO_COMMAND}" umount "${WORKDIR}/${BOOTPARTLABEL}"
 rmdir "${WORKDIR}/${BOOTPARTLABEL}"
 

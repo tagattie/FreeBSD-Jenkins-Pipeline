@@ -114,6 +114,7 @@ rmdir "${WORKDIR}/${BOOTPARTLABEL}"
 # Add freebsd-ufs partition (make alignment to 64KiB)
 "${SUDO_COMMAND}" gpart add -a "${FBPARTFSALIGN}" \
     -t "${FBPARTFSTYPE}" "${MDDEVNAME}s2"
+# Make UFS filesystem (big endian) from the distribution
 "${SUDO_COMMAND}" makefs -B "${FBPARTFSENDIAN}" \
     -f "${FBPARTFSMINFREE}" \
     -t ffs \
@@ -124,8 +125,10 @@ rmdir "${WORKDIR}/${BOOTPARTLABEL}"
     of="/dev/${MDDEVNAME}s2a" bs=1m
 "${SUDO_COMMAND}" mdconfig -d -u "${MDDEVNAME}"
 
+# Copy image file to specified directory
 mkdir -p "${IMAGEDIR}"
 cp -pf "${WORKDIR}/${IMAGEFILE}" "${IMAGEDIR}"
+
 echo "Your image is ready at ${IMAGEDIR}/${IMAGEFILE}"
 echo "To write the image to a USB stick, do the following command:"
 echo "sudo dd if=${IMAGEDIR}/${IMAGEFILE} of=/dev/<your USB stick> bs=1m"

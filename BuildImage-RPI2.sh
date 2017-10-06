@@ -103,7 +103,8 @@ mkdir -p "${WORKDIR}/${BOOTPARTLABEL}"
     -l "/dev/${MDDEVNAME}s1" "${WORKDIR}/${BOOTPARTLABEL}"
 
 UBOOTBASEDIR="/usr/local/share/u-boot/u-boot-rpi2"
-UBOOTFILES="LICENCE.broadcom README bootcode.bin config.txt fixup.dat fixup_cd.dat fixup_x.dat start.elf start_cd.elf start_x.elf u-boot.bin"
+UBOOTFILES="LICENCE.broadcom README bootcode.bin config.txt fixup.dat \
+    fixup_cd.dat fixup_x.dat start.elf start_cd.elf start_x.elf u-boot.bin"
 UBLDRBASEDIR="${DESTDIR}/boot"
 UBLDRFILES="ubldr ubldr.bin dtb/rpi2.dtb"
 for i in ${UBOOTFILES}; do

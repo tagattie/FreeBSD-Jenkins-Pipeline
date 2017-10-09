@@ -285,6 +285,7 @@ def transformIntoBuildImageStep(String hostStr) {
 find ${config.freebsd.destDirBase} -maxdepth 2 -type d -name ${hostStr} -print | \\
 awk -F'/' '{print \$(NF-1), \$NF}' | \\
 sort -nr | \\
+head -n 1 | \\
 awk '{print \$1}'
 """
                             ).trim()

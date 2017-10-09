@@ -1,0 +1,19 @@
+#! /bin/sh
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# Mount a small /tmp, /var, and /etc
+echo -n "Mounting /tmp, /var, and /etc... "
+mount_mfs -s 1m md /tmp
+mount_mfs -s 1m md /var
+mount_mfs -s 1m md /etc
+echo "Done."
+
+# Copy the contents of /c/etc into /etc
+echo -n "Copying files in /c/etc to /etc... "
+cp -a /c/etc/ /etc
+ln -s /usr/share/misc/termcap /etc/
+echo "Done."
+
+echo "Starting rc.next..."
+exec /etc/rc.next

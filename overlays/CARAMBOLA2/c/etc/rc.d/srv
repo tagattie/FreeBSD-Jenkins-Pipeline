@@ -1,0 +1,16 @@
+#! /bin/sh
+
+# This starts services in the "services_list".
+
+. /etc/rc.subr
+. /etc/rc.conf.default
+. /etc/cfg/rc.conf
+
+cmd=$1
+shift
+
+for i in ${services_list}; do
+	/etc/rc.d/${i} ${cmd}
+done
+
+exit 0

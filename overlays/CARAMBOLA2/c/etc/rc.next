@@ -1,0 +1,85 @@
+#! /bin/sh
+
+# This is run once rc has setup /tmp, /var, and /etc.
+# It's our responsibility to set things up to run.
+
+# Directories
+echo -n "Populating /var... "
+mkdir -p /var/run/hostapd
+mkdir -p /var/log
+mkdir -p /var/tmp
+mkdir -p /var/db
+mkdir -p /var/empty
+mkdir -p /var/cron
+mkdir -p /var/cron/tabs
+echo "Done."
+
+echo -n "Reading board configuration... "
+. /etc/board.cfg || exit 1
+echo "Done."
+
+recovery=0
+
+if [ "${RECOVERY_PIN}" != "" ] && \
+    [ "$(gpioctl "${RECOVERY_PIN}")" -eq "${RECOVERY_PIN_ACTIVE}" ]; then
+    recovery=1
+    echo "(Recovery Mode) Not loading configuration files."
+else
+    echo -n "Loading configuration files... "
+    cfg_load
+    echo "Done."
+fi
+
+# At this point, a base configuration file exists in /etc/cfg/rc.conf.
+. /etc/rc.conf.default
+. /etc/cfg/rc.conf
+
+echo "Setting up hostname... "
+hostname ${system_hostname}
+echo "Done."
+
+echo -n "Loading kernel modules... "
+for i in ${kernel_modules}; do
+    echo -n "${i} "
+    /sbin/kldload ${i}
+done
+echo "Done."
+
+# Disable random entropy gathering for high-overhead things
+echo "Setting kern.random.harvest.mask=511... "
+sysctl kern.random.harvest.mask=511
+echo "Done."
+
+echo "Bringing up loopback..."
+ifconfig lo0 inet 127.0.0.1 netmask 255.0.0.0 up
+echo "Done."
+
+echo "Creating password/login databases... "
+pwd_mkdb /etc/master.passwd
+cap_mkdb /etc/login.conf
+echo "Done."
+
+echo "Customizing sysctl... "
+/etc/rc.d/sysctl start
+echo "Done."
+
+echo "Starting networking... "
+/etc/rc.d/net start
+echo "Done."
+
+echo "Starting cron... "
+/etc/rc.d/cron start
+echo "Done."
+
+echo "Starting firewall/routing... "
+# /etc/rc.d/firewall start
+/etc/rc.d/routing start
+echo "Done."
+
+echo "Starting services... "
+/etc/rc.d/srv start
+echo "Done."
+
+echo "All Done!!"
+
+exit 0

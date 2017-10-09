@@ -1,0 +1,17 @@
+#! /bin/sh
+
+# This configures devices in the "network_interfaces".
+
+. /etc/rc.subr
+. /etc/rc.conf.default
+. /etc/cfg/rc.conf
+
+cmd=$1
+shift
+
+for i in ${network_interfaces}; do
+	type=$(get_if_var $i netif_IF_type)
+	/etc/rc.d/${type} ${cmd} ${i}
+done
+
+exit 0

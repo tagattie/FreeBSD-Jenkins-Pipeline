@@ -69,6 +69,10 @@ pipeline {
                         )
                         buildImageSteps = config.freebsd.hosts.findAll(
                             {
+                                it.getValue().get('enabled')
+                            }
+                        ).findAll(
+                            {
                                 it.getValue().get('buildImage')
                             }
                         ).collectEntries(

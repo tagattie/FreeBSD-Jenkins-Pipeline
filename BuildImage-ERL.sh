@@ -102,10 +102,10 @@ mkdir -p "${WORKDIR}/${BOOTPARTLABEL}"
 "${SUDO_COMMAND}" mount -t "${BOOTPARTFSTYPE}" \
     -l "/dev/${MDDEVNAME}s1" "${WORKDIR}/${BOOTPARTLABEL}"
 
-install -d "${WORKDIR}/${FBPARTFSLABEL}/kernel"
+install -d "${WORKDIR}/${BOOTPARTLABEL}/kernel"
 (cd "${DESTDIR}/boot/kernel" && \
     find . -print -depth | \
-    cpio -padm "${WORKDIR}/${FBPARTFSLABEL}/kernel")
+    cpio -padm "${WORKDIR}/${BOOTPARTLABEL}/kernel")
 
 "${SUDO_COMMAND}" umount "${WORKDIR}/${BOOTPARTLABEL}"
 rmdir "${WORKDIR}/${BOOTPARTLABEL}"

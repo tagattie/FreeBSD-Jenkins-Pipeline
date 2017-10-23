@@ -70,6 +70,10 @@ for i in ${OVERLAYFILES}; do
         -g "${OVERLAYFILEGROUP}" \
         "${WORKSPACE}/overlays/${CONFNAME}/${i}" "${DESTDIR}/${i}"
 done
+${SUDO_COMMAND} install -d \
+    -o ${OVERLAYFILEOWNER} \
+    -g ${OVERLAYFILEGROUP} \
+    ${DESTDIR}/boot/msdos
 ### Swapfile
 # "${SUDO_COMMAND}" truncate -s "${SWAPFILESIZE}" "${DESTDIR}/${SWAPFILENAME}"
 # "${SUDO_COMMAND}" chmod 600 "${DESTDIR}/${SWAPFILENAME}"

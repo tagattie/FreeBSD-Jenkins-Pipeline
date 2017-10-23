@@ -3,6 +3,8 @@
 export  LANG=C
 export  PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 
+SUDO_COMMAND=sudo
+
 # Comman-line format:
 # Build.sh srcDir objDirPrefix machArch cpuArch kernArgs destArgs additionalArgs buildTargets
 SRCDIR=${1}
@@ -24,7 +26,7 @@ NJOBS=$(sysctl hw.ncpu|awk '{print $NF}')
 MAKE_ENVS="MAKEOBJDIRPREFIX=${OBJDIRPREFIX}"
 MAKE_FLAGS="-DDB_FROM_SRC -DNO_FSCHG"
 MAKE_ARGS="TARGET=${ARCH_m} TARGET_ARCH=${ARCH_p} ${KERN_ARGS} ${DEST_ARGS} ${ADD_ARGS}"
-MAKE_TARGET="${TARGETS}"
+MAKE_TARGET=${TARGETS}
 
 if [ "${dryRunBuild}" == "true" ]; then
     DRYRUN_FLAG="-n"
@@ -39,8 +41,7 @@ for i in "$@"; do
     elif [ "${i}" == "installworld" ] || \
              [ "${i}" == "installkernel" ] || \
              [ "${i}" == "distribution" ]; then
-        SUDO_COMMAND="sudo"
-        FINAL_MAKE_FLAGS="${MAKE_FLAGS}"
+        FINAL_MAKE_FLAGS=${MAKE_FLAGS}
     fi
     BUILD_COMMAND="${SUDO_COMMAND} env ${MAKE_ENVS} make ${FINAL_MAKE_FLAGS} ${MAKE_ARGS} ${i}"
     (cd ${SRCDIR} && ${BUILD_COMMAND})

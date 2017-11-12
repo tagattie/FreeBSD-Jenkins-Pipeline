@@ -11,14 +11,17 @@ SRCDIR=${1}
 OBJDIRPREFIX=${2}
 ARCH_m=${3}
 ARCH_p=${4}
-if [ "${5}" != "null" ]; then
-    KERN_ARGS="KERNCONF=${5}"
+if [ -n "${5}" ] && \
+    [ "${5}" != "null" ]; then
+        KERN_ARGS="KERNCONF=${5}"
 fi
-if [ "${6}" != "null" ]; then
-    DEST_ARGS="DESTDIR=${6}"
+if [ -n "${6}" ] && \
+    [ "${6}" != "null" ]; then
+        DEST_ARGS="DESTDIR=${6}"
 fi
-if [ "${7}" != "null" ]; then
-    ADD_ARGS=${7}
+if [ -n "${7}" ] && \
+    [ "${7}" != "null" ]; then
+        ADD_ARGS=${7}
 fi
 
 NJOBS=$(sysctl hw.ncpu|awk '{print $NF}')

@@ -1,0 +1,3 @@
+[submodule "FreeBSD-Manual-Build"]
+	path = FreeBSD-Manual-Build
+	url = git@github.com:tagattie/FreeBSD-Manual-Build.git

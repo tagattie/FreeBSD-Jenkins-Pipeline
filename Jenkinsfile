@@ -212,14 +212,8 @@ def transformIntoBuildStep(String branchStr, String archStr) {
                 "${forceBuild}" == "true") {
                 try {
                     sh """
-${WORKSPACE}/Build.sh \\
-    ${config.freebsd.srcDirs."${branchStr}"} \\
-    ${config.freebsd.objDirBase}/"${BUILDNAME}"/"${branchStr}" \\
-    ${config.freebsd.archs."${archStr}".arch_m} \\
-    ${config.freebsd.archs."${archStr}".arch_p} \\
-    "" \\
-    "" \\
-    "" \\
+${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
+    ${archStr}-${branchStr} \\
     buildworld \\
     buildkernel
 """

@@ -4,7 +4,7 @@
     "build": {
       "current": {
         "branch": "current",
-        "archs": ["amd64", "i386", "armv6", "arm64", "mips", "mips64"],
+        "archs": ["amd64", "i386", "arm64", "armv6", "mips64", "mips"],
         "enabled": true
       },
       "<branchname>": {

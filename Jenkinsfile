@@ -241,14 +241,8 @@ def transformIntoBuildHostStep(String hostStr) {
                         targets += "${it}" + " "
                     }
                     sh """
-${WORKSPACE}/Build.sh \\
-    ${config.freebsd.srcDirs."${config.freebsd.hosts."${hostStr}".branch}"} \\
-    ${config.freebsd.objDirBase}/"${BUILDNAME}"/"${hostStr}" \\
-    ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_m} \\
-    ${config.freebsd.archs."${config.freebsd.hosts."${hostStr}".arch}".arch_p} \\
-    ${config.freebsd.hosts."${hostStr}".kernConf} \\
-    ${config.freebsd.destDirBase}/"${BUILDNAME}"/"${hostStr}" \\
-    ${config.freebsd.hosts."${hostStr}".addMakeEnv} \\
+${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
+    ${hostStr} \\
     ${targets}
 """
                     currentBuild.description += " SUCCESS(build ${hostStr})"

@@ -23,6 +23,7 @@ pipeline {
                     archiveArtifacts 'Jenkinsfile'
                     archiveArtifacts '*.sh'
                     archiveArtifacts 'Config.json'
+                    archiveArtifacts 'FreeBSD-Manual-Build/*'
                 }
             }
         }

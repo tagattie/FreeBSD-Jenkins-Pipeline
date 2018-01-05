@@ -219,8 +219,7 @@ def transformIntoBuildStep(String branchStr, String archStr) {
                     sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
     ${archStr}-${branchStr} \\
-    buildworld \\
-    buildkernel
+    buildworld buildkernel
 """
                     currentBuild.description += " SUCCESS(build world & kernel:${branchStr}:${archStr})"
                 } catch (Exception e) {

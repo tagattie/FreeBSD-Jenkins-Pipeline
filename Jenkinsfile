@@ -243,8 +243,9 @@ def transformIntoBuildHostStep(String hostStr) {
                         targets += "${it}" + " "
                     }
                     sh """
-${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
-    ${hostStr} \\
+${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
+    -h ${hostStr} \\
+    -c ${WORKSPACE}/jenkins-conf.sh \\
     ${targets}
 """
                     currentBuild.description += " SUCCESS(build ${hostStr})"

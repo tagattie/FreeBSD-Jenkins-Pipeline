@@ -63,7 +63,11 @@ pipeline {
                                 [it, transformIntoBuildStep(it[0], it[1])]
                             }
                         )
-                        buildHostSteps = config.freebsd.hosts.collectEntries(
+                        buildHostSteps = config.freebsd.hosts.findAll(
+                            {
+                                it.getValue().get('enabled')
+                            }
+                        ).collectEntries(
                             {
                                 [it.getValue().get('hostname'), transformIntoBuildHostStep(it.getValue().get('hostname'))]
                             }
@@ -233,8 +237,7 @@ def transformIntoBuildHostStep(String hostStr) {
         timestamps {
             if (((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
                   buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
-                 "${forceBuild}" == "true") &&
-                config.freebsd.hosts."${hostStr}".enabled) {
+                 "${forceBuild}" == "true")) {
                 try {
                     def targets = ""
                     config.freebsd.hosts."${hostStr}".steps.each {

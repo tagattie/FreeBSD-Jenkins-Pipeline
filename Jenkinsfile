@@ -183,7 +183,10 @@ def transformIntoPollStep(String inputStr) {
             try {
                 changed[inputStr] = sh (
                     returnStdout: true,
-                    script: "svnlite status -qu ${config.freebsd.srcDirs."${inputStr}"} | wc -l").trim() as Integer
+                    script: """
+${WORKSPACE}/FreeBSD-Manual-Build/Poll.sh ${inputStr}
+"""
+                ).trim() as Integer
                 currentBuild.description += " SUCCESS(poll ${inputStr} ${changed["${inputStr}"]})"
             } catch (Exception e) {
                 currentBuild.description += " FAILURE(poll ${inputStr})"
@@ -198,7 +201,9 @@ def transformIntoUpdateStep(String inputStr) {
         timestamps {
             if (changed[inputStr] > 0) {
                 try {
-                    sh "sudo svnlite update ${config.freebsd.srcDirs."${inputStr}"}"
+                    sh """
+${WORKSPACE}/FreeBSD-Manual-Build/Update.sh ${inputStr}
+"""
                     currentBuild.description += " SUCCESS(update ${inputStr})"
                 } catch (Exception e) {
                     buildable[inputStr] = false

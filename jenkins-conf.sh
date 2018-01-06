@@ -9,3 +9,7 @@ export DESTDIR=${DESTDIR_BASEDIR}/${DESTHOST}
 
 # dummy mount targets to pass check
 export MOUNT_TARGETS="localhost:${ROOTDIR}:${DESTDIR_MOUNTTYPE}:${ROOTDIR}"
+
+export ROOTDIR_DEST=${DESTDIR}${ROOTDIR}
+export BOOTDIR_DEST=${DESTDIR}${BOOTDIR}
+export BOOTEFIDIR_DEST=${DESTDIR}${BOOTEFIDIR}

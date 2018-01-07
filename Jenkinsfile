@@ -326,20 +326,18 @@ def transformIntoBuildImageStep(String hostStr) {
                     def conf = "${config.freebsd.hosts."${hostStr}".buildImageConf}"
                     def buildName = "${BUILDNAME}"
                     if ("${enabled}" == "true" && "${conf}" != "null") {
-                        if ("${useLatestExistingBuild}" == "true") {
-                            buildName = sh (
-                                returnStdout: true,
-                                script: """
+                        buildName = sh (
+                            returnStdout: true,
+                            script: """
 find ${config.freebsd.destDirBase} -maxdepth 2 -type d -name ${hostStr} -print | \\
 awk -F'/' '{print \$(NF-1), \$NF}' | \\
 sort -nr | \\
 head -n 1 | \\
 awk '{print \$1}'
 """
-                            ).trim()
-                            if (!"${buildName}") {
-                                error("No existing build. Cannot continue to make image.")
-                            }
+                        ).trim()
+                        if (!"${buildName}") {
+                            error("No existing build. Cannot continue to make image.")
                         }
                         sh """
 ${WORKSPACE}/"BuildImage-${conf}.sh" \\

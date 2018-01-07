@@ -246,16 +246,32 @@ def transformIntoBuildHostStep(String hostStr) {
             if ((changed["${BRANCH}"] > 0 && buildable["${BRANCH}"]) ||
                 "${forceBuild}" == "true") {
                 try {
-                    def targets = ""
-                    config.freebsd.hosts."${hostStr}".steps.each {
-                        targets += "${it}" + " "
-                    }
-                    sh """
+                    // When no steps specified in config,
+                    // do complete install including boot files.
+                    // (Default)
+                    if (!config.freebsd.hosts."${hostStr}".steps) {
+                        def targets = "buildworld buildkernel installworld installkernel distribution"
+                        sh """
+${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
+    -h ${hostStr} \\
+    -c ${WORKSPACE}/jenkins-conf.sh \\
+    ${targets}
+${WORKSPACE}/FreeBSD-Manual-Build/InstallBoot.sh \\
+    -h ${hostStr} \\
+    -c ${WORKSPACE}/jenkins-conf.sh
+"""
+                    } else {
+                        def targets = ""
+                        config.freebsd.hosts."${hostStr}".steps.each {
+                            targets += "${it}" + " "
+                        }
+                        sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
     -h ${hostStr} \\
     -c ${WORKSPACE}/jenkins-conf.sh \\
     ${targets}
 """
+                    }
                     currentBuild.description += " SUCCESS(build ${hostStr})"
                 } catch (Exception e) {
                     currentBuild.description += " FAILURE(build ${hostStr})"

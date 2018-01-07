@@ -11,8 +11,29 @@ pipeline {
             script: 'date "+%Y-%m-%d-%H%M%S"'
         ).trim()
     }
-    // parameters {
-    // }
+    parameters {
+        booleanParam(name: 'DOPOLL',
+                     defaultValue: true,
+                     description: 'If true, execute poll stage.')
+        booleanParam(name: 'DOUPDATE',
+                     defaultValue: true,
+                     description: 'If true, execute update stage.')
+        booleanParam(name: 'DOBUILD',
+                     defaultValue: true,
+                     description: 'If true, execute build stage.')
+        booleanParam(name: 'FORCEBUILD',
+                     defaultValue: false,
+                     description: 'If true, execute build stage even when there are no updates.')
+        booleanParam(name: 'DONTCLEAN',
+                     defaultValue: false,
+                     description: 'If true, don\'t clean source tree before building.')
+        booleanParam(name: 'DOBUILDHOST',
+                     defaultValue: true,
+                     description: 'If true, execute build host stage.')
+        booleanParam(name: 'DOBUILDIMAGE',
+                     defaultValue: true,
+                     description: 'If true, execute build host image stage.')
+    }
     // triggers {
     // }
     stages {
@@ -102,7 +123,7 @@ pipeline {
 
         stage('Poll SCM.') {
             when {
-                environment name: 'doPoll', value: 'true'
+                environment name: 'DOPOLL', value: 'true'
             }
             steps {
                 script {
@@ -118,7 +139,7 @@ pipeline {
 
         stage('Update source tree.') {
             when {
-                environment name: 'doUpdate', value: 'true'
+                environment name: 'DOUPDATE', value: 'true'
             }
             steps {
                 script {
@@ -135,7 +156,7 @@ pipeline {
         // TODO: Parallelize these two stages.
         stage('Build world and generic kernel.') {
             when {
-                environment name: 'doBuild', value: 'true'
+                environment name: 'DOBUILD', value: 'true'
             }
             steps {
                 script {
@@ -146,7 +167,7 @@ pipeline {
 
         stage('Build host.') {
             when {
-                environment name: 'doBuildHost', value: 'true'
+                environment name: 'DOBUILDHOST', value: 'true'
             }
             steps {
                 script {
@@ -157,7 +178,7 @@ pipeline {
 
         stage('Build image.') {
             when {
-                environment name: 'doBuildImage', value: 'true'
+                environment name: 'DOBUILDIMAGE', value: 'true'
             }
             steps {
                 script {
@@ -219,7 +240,7 @@ def transformIntoBuildStep(String branchStr, String archStr) {
     return {
         timestamps {
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
-                "${forceBuild}" == "true") {
+                "${FORCEBUILD}" == "true") {
                 try {
                     sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
@@ -244,7 +265,7 @@ def transformIntoBuildHostStep(String hostStr) {
                 script: "${WORKSPACE}/FreeBSD-Manual-Build/Branch.sh ${hostStr}"
             ).trim()
             if ((changed["${BRANCH}"] > 0 && buildable["${BRANCH}"]) ||
-                "${forceBuild}" == "true") {
+                "${FORCEBUILD}" == "true") {
                 try {
                     // When no steps specified in config,
                     // do complete install including boot files.
@@ -287,7 +308,7 @@ def transformIntoBuildImageStep(String hostStr) {
         timestamps {
             if ((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
                  buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
-                "${forceBuild}" == "true" ||
+                "${FORCEBUILD}" == "true" ||
                 "${useLatestExistingBuild}" == "true") {
                 try {
                     def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"

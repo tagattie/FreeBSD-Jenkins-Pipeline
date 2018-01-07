@@ -239,8 +239,15 @@ ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
 def transformIntoBuildHostStep(String hostStr) {
     return {
         timestamps {
-            if ((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
-                 buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
+            BRANCH=sh (
+                returnStdout: true,
+                script: """
+. ${WORKSPACE}/FreeBSD-Manual-Build/conf/host/${hostStr}.sh
+echo ${BRANCH}
+"""
+            ).trim()
+            echo ${BRANCH}
+            if ((changed["${BRANCH}"] > 0 && buildable["${BRANCH}"]) ||
                 "${forceBuild}" == "true") {
                 try {
                     def targets = ""

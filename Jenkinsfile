@@ -5,11 +5,6 @@ pipeline {
     environment {
         // Configuration file (JSON)
         CONFIG='Config.json'
-        // Build name based on current date/time
-        BUILDNAME=sh (
-            returnStdout: true,
-            script: 'date "+%Y-%m-%d-%H%M%S"'
-        ).trim()
     }
     parameters {
         booleanParam(name: 'DOPOLL',
@@ -322,23 +317,7 @@ def transformIntoBuildImageStep(String hostStr) {
             if ((changed[BRANCH] > 0 && buildable[BRANCH]) ||
                 FORCEBUILD) {
                 try {
-                    def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"
-                    def conf = "${config.freebsd.hosts."${hostStr}".buildImageConf}"
-                    def buildName = "${BUILDNAME}"
-                    if ("${enabled}" == "true" && "${conf}" != "null") {
-                        buildName = sh (
-                            returnStdout: true,
-                            script: """
-find ${config.freebsd.destDirBase} -maxdepth 2 -type d -name ${hostStr} -print | \\
-awk -F'/' '{print \$(NF-1), \$NF}' | \\
-sort -nr | \\
-head -n 1 | \\
-awk '{print \$1}'
-"""
-                        ).trim()
-                        if (!"${buildName}") {
-                            error("No existing build. Cannot continue to make image.")
-                        }
+                    if (config.freebsd.hosts."${hostStr}".buildImage) {
                         sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Image.sh \\
     -h ${hostStr} \\

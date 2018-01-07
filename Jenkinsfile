@@ -241,9 +241,13 @@ def transformIntoBuildStep(String branchStr, String archStr) {
         timestamps {
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
                 "${FORCEBUILD}" == "true") {
+                if (DONTCLEAN) {
+                    optionsAdd = "-d"
+                }
                 try {
                     sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh -h \\
+    ${optionsAdd} \\
     ${archStr}-${branchStr} \\
     buildworld buildkernel
 """
@@ -266,6 +270,9 @@ def transformIntoBuildHostStep(String hostStr) {
             ).trim()
             if ((changed["${BRANCH}"] > 0 && buildable["${BRANCH}"]) ||
                 "${FORCEBUILD}" == "true") {
+                if (DONTCLEAN) {
+                    optionsAdd = "-d"
+                }
                 try {
                     // When no steps specified in config,
                     // do complete install including boot files.
@@ -276,6 +283,7 @@ def transformIntoBuildHostStep(String hostStr) {
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
     -h ${hostStr} \\
     -c ${WORKSPACE}/jenkins-conf.sh \\
+    ${optionsAdd} \\
     ${targets}
 ${WORKSPACE}/FreeBSD-Manual-Build/InstallBoot.sh \\
     -h ${hostStr} \\
@@ -290,6 +298,7 @@ ${WORKSPACE}/FreeBSD-Manual-Build/InstallBoot.sh \\
 ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
     -h ${hostStr} \\
     -c ${WORKSPACE}/jenkins-conf.sh \\
+    ${optionsAdd} \\
     ${targets}
 """
                     }

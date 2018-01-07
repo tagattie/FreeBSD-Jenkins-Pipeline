@@ -340,14 +340,10 @@ awk '{print \$1}'
                             error("No existing build. Cannot continue to make image.")
                         }
                         sh """
-${WORKSPACE}/"BuildImage-${conf}.sh" \\
-    ${buildName} \\
-    ${config.freebsd.destDirBase}/"${buildName}"/"${hostStr}" \\
-    ${config.freebsd.imageDirBase}/"${buildName}" \\
-    ${hostStr} \\
-    ${config.freebsd.hosts."${hostStr}".branch} \\
-    ${config.freebsd.hosts."${hostStr}".arch} \\
-    ${config.freebsd.hosts."${hostStr}".buildImageConf}
+${WORKSPACE}/FreeBSD-Manual-Build/Image.sh \\
+    -h ${hostStr} \\
+    -c ${WORKSPACE}/jenkins-conf.sh \\
+    ${targets}
 """
                         currentBuild.description += " SUCCESS(build image ${hostStr})"
                     }

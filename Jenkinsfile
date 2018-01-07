@@ -240,7 +240,7 @@ def transformIntoBuildStep(String branchStr, String archStr) {
     return {
         timestamps {
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
-                "${FORCEBUILD}" == "true") {
+                FORCEBUILD) {
                 if (DONTCLEAN) {
                     optionsAdd = "-d"
                 }
@@ -268,8 +268,8 @@ def transformIntoBuildHostStep(String hostStr) {
                 returnStdout: true,
                 script: "${WORKSPACE}/FreeBSD-Manual-Build/Branch.sh ${hostStr}"
             ).trim()
-            if ((changed["${BRANCH}"] > 0 && buildable["${BRANCH}"]) ||
-                "${FORCEBUILD}" == "true") {
+            if ((changed[BRANCH] > 0 && buildable[BRANCH]) ||
+                FORCEBUILD) {
                 if (DONTCLEAN) {
                     optionsAdd = "-d"
                 }
@@ -315,10 +315,12 @@ ${WORKSPACE}/FreeBSD-Manual-Build/Build.sh \\
 def transformIntoBuildImageStep(String hostStr) {
     return {
         timestamps {
-            if ((changed["${config.freebsd.hosts."${hostStr}".branch}"] > 0 &&
-                 buildable["${config.freebsd.hosts."${hostStr}".branch}"]) ||
-                "${FORCEBUILD}" == "true" ||
-                "${useLatestExistingBuild}" == "true") {
+            BRANCH=sh (
+                returnStdout: true,
+                script: "${WORKSPACE}/FreeBSD-Manual-Build/Branch.sh ${hostStr}"
+            ).trim()
+            if ((changed[BRANCH] > 0 && buildable[BRANCH]) ||
+                FORCEBUILD) {
                 try {
                     def enabled = "${config.freebsd.hosts."${hostStr}".buildImage}"
                     def conf = "${config.freebsd.hosts."${hostStr}".buildImageConf}"

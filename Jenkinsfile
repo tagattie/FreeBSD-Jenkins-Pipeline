@@ -321,8 +321,7 @@ def transformIntoBuildImageStep(String hostStr) {
                         sh """
 ${WORKSPACE}/FreeBSD-Manual-Build/Image.sh \\
     -h ${hostStr} \\
-    -c ${WORKSPACE}/jenkins-conf.sh \\
-    ${targets}
+    -c ${WORKSPACE}/jenkins-conf.sh
 """
                         currentBuild.description += " SUCCESS(build image ${hostStr})"
                     }

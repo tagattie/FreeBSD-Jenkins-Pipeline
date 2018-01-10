@@ -1,7 +1,0 @@
-# Device	Mountpoint		FStype	Options		Dump	Pass#
-# Local Devices
-/dev/ufs/rootfs	/			ufs	rw		1	1
-/dev/msdosfs/MSDOSBOOT	/boot/msdos	msdosfs	rw,noatime	0	0
-md99		none			swap	sw,file=/swap0,late 0	0
-# Logical Devices
-tmpfs		/tmp			tmpfs	rw,mode=1777,size=64m 0	0

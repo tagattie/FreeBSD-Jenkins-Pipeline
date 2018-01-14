@@ -235,8 +235,8 @@ def transformIntoBuildStep(String branchStr, String archStr) {
     return {
         timestamps {
             if ((changed[branchStr] > 0 && buildable[branchStr]) ||
-                FORCEBUILD) {
-                if (DONTCLEAN) {
+                param.FORCEBUILD) {
+                if (param.DONTCLEAN) {
                     optionsAdd = "-d"
                 }
                 try {
@@ -264,8 +264,8 @@ def transformIntoBuildHostStep(String hostStr) {
                 script: "${WORKSPACE}/FreeBSD-Manual-Build/Branch.sh ${hostStr}"
             ).trim()
             if ((changed[BRANCH] > 0 && buildable[BRANCH]) ||
-                FORCEBUILD) {
-                if (DONTCLEAN) {
+                param.FORCEBUILD) {
+                if (param.DONTCLEAN) {
                     optionsAdd = "-d"
                 }
                 try {
@@ -315,7 +315,7 @@ def transformIntoBuildImageStep(String hostStr) {
                 script: "${WORKSPACE}/FreeBSD-Manual-Build/Branch.sh ${hostStr}"
             ).trim()
             if ((changed[BRANCH] > 0 && buildable[BRANCH]) ||
-                FORCEBUILD) {
+                param.FORCEBUILD) {
                 try {
                     if (config.freebsd.hosts."${hostStr}".buildImage) {
                         sh """

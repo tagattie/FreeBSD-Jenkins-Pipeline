@@ -20,7 +20,7 @@ pipeline {
                      defaultValue: false,
                      description: 'If true, execute build stage even when there are no updates.')
         booleanParam(name: 'DONTCLEAN',
-                     defaultValue: false,
+                     defaultValue: true,
                      description: 'If true, don\'t clean source tree before building.')
         booleanParam(name: 'DOBUILDHOST',
                      defaultValue: true,

@@ -36,7 +36,7 @@ pipeline {
             steps {
                 timestamps {
                     checkout scm
-                    archiveArtifacts 'Jenkinsfile'
+                    archiveArtifacts 'Jenkinsfile.groovy'
                     archiveArtifacts '*.sh'
                     archiveArtifacts 'Config.json'
                     archiveArtifacts 'FreeBSD-Manual-Build/*'
